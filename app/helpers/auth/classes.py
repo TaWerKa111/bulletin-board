@@ -1,0 +1,39 @@
+from typing import List
+
+import jwt
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import Request, HTTPException
+
+from settings import AppConfig
+
+
+class JWTBearer(HTTPBearer):
+    def __init__(self, roles: List[str] = None):
+        self.roles = roles
+        super().__init__()
+
+    def __call__(self, request: Request):
+        credentials: HTTPAuthorizationCredentials = await super().__call__(
+            request)
+        if credentials:
+            if not (payload := self.verify_jwt(credentials.credentials)):
+                raise HTTPException(
+                    status_code=403, detail="Invalid token or expired token.")
+            if payload.get("refresh_uuid"):
+                raise HTTPException(
+                    status_code=403, detail="Invalid token or expired token.")
+            if self.roles and payload.get("role") in self.roles:
+                raise HTTPException(
+                    status_code=403, detail="Invalid token or expired token.")
+            return payload
+        else:
+            raise HTTPException(
+                status_code=403, detail="Invalid authorization code.")
+
+    @staticmethod
+    def verify_jwt(token):
+        try:
+            payload = jwt.decode(token, AppConfig.secret_key)
+            return payload
+        except :
+            return None

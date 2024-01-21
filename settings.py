@@ -14,4 +14,11 @@ class RoleConfig:
     user: str = "user"
 
 
+@dataclasses.dataclass
+class AppConfig:
+    secret_key = "secrets"
+    role = RoleConfig()
+    database = Database()
+
+
 config_database = Database()
