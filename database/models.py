@@ -1,7 +1,8 @@
 import datetime
 
-from sqlalchemy import String, Boolean, DateTime, Integer, ForeignKey, select, \
-    Text
+from sqlalchemy import (
+    String, DateTime, Integer, ForeignKey, select, Text
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -23,10 +24,15 @@ class UserModel(Base, TimeStampMixin):
     __tablename__ = f"{config_database.prefix}users"
 
     id: Mapped[int] = mapped_column(Integer(), primary_key=True)
+    name: Mapped[str] = mapped_column(String(64))
     login: Mapped[str] = mapped_column(String(32), unique=True)
     password_hash: Mapped[str] = mapped_column(String(64))
     role: Mapped[str] = mapped_column(String(8))
-    active: Mapped[bool] = mapped_column(Boolean(), server_default="t")
+    blocked_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(), nullable=True)
+    delete_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(), nullable=True
+    )
 
     @classmethod
     async def get_user_by_login(
@@ -36,6 +42,36 @@ class UserModel(Base, TimeStampMixin):
             select(cls)
             .where(
                 cls.login == login
+            )
+        )
+        result = await db_session.execute(query)
+        return result.scalars().first()
+
+    @classmethod
+    async def get_users(
+        cls, db_session: AsyncSession, page_params: PageParams, login: str,
+        is_blocked: True = False
+    ) -> Page:
+        query = select(cls)
+
+        if login:
+            login_str = f"%{login}%"
+            query = query.where(cls.login.ilike(login_str))
+
+        if is_blocked:
+            query = query.where(cls.blocked_at.isnot(None))
+
+        result = await paginate(db_session, query, page_params)
+        return result
+
+    @classmethod
+    async def get_user_by_id(
+        cls, db_session: AsyncSession, user_id: int
+    ) -> "UserModel":
+        query = (
+            select(cls)
+            .where(
+                cls.id == user_id
             )
         )
         result = await db_session.execute(query)
