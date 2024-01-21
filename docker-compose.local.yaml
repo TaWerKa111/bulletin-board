@@ -1,0 +1,33 @@
+version: "3.0"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: api.Dockerfile
+    ports:
+      - "8000:8000"
+    command:
+      - "uvicorn"
+      - "apps.api.admin:app"
+      - "--host"
+      - "admin_api"
+      - "--port"
+      - "8000"
+      - "--reload"
+    volumes:
+      - .:/app
+
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: bulletin-app
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+volumes:
+  pg_data:
