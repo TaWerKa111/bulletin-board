@@ -7,7 +7,7 @@ class CreateBulletinSchema(BaseModel):
     body: str
 
 
-class BulletinSchema(CreateBulletinSchema):
+class DetailBulletinSchema(CreateBulletinSchema):
     id: int
     user_id: int
 
@@ -15,9 +15,18 @@ class BulletinSchema(CreateBulletinSchema):
         from_attributes = True
 
 
+class MinBulletinSchema(BaseModel):
+    id: int
+    user_id: int
+    title: int
+
+    class Meta:
+        from_attributes = True
+
+
 class BulletinResponse(BaseModel):
-    result: BulletinSchema | None
+    result: MinBulletinSchema | None
 
 
 class BulletinListResponse(BaseModel):
-    result: Page[BulletinSchema]
+    result: Page[DetailBulletinSchema]
