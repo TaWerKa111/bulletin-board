@@ -10,7 +10,7 @@ from pydantic_settings import BaseSettings
 
 class Database(BaseSettings):
     prefix: str = "board_"
-    database_url: str = "postgresql+asyncpg://admin:admin@db/board-bulletin"
+    database_url: str = "postgresql+asyncpg://admin:admin@localhost:5432/bulletin-app"
 
 
 @dataclasses.dataclass
@@ -25,7 +25,7 @@ class AppConfig:
     role = RoleConfig()
     database = Database()
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    logging_conf = base_dir + "/logging.yml"
+    logging_conf = base_dir + "/logging.yaml"
 
 
 config_database = Database()

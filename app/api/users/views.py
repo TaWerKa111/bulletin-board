@@ -34,7 +34,7 @@ async def get_users(
 
 @router.patch("/{id}/block/")
 async def block_user(
-    user_id: Path(alias="id"),
+    user_id: int = Path(alias="id"),
     db_session: AsyncSession = Depends(get_session),
     jwt_payload: dict = Depends(JWTBearer(roles=[AppConfig.role.admin]))
 ):
@@ -59,7 +59,7 @@ async def block_user(
 
 @router.patch("/{id}/unblock/")
 async def block_user(
-    user_id: Path(alias="id"),
+    user_id: int = Path(alias="id"),
     db_session: AsyncSession = Depends(get_session),
     jwt_payload: dict = Depends(JWTBearer(roles=[AppConfig.role.admin]))
 ):
@@ -83,7 +83,7 @@ async def block_user(
 
 @router.delete("/{id}/")
 async def delete_user(
-    user_id: Path(alias="id"),
+    user_id: int = Path(alias="id"),
     db_session: AsyncSession = Depends(get_session),
     jwt_payload: dict = Depends(JWTBearer(roles=[AppConfig.role.admin]))
 ):

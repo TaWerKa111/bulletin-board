@@ -12,7 +12,7 @@ class JWTBearer(HTTPBearer):
         self.roles = roles
         super().__init__()
 
-    def __call__(self, request: Request):
+    async def __call__(self, request: Request):
         credentials: HTTPAuthorizationCredentials = await super().__call__(
             request)
         if credentials:
