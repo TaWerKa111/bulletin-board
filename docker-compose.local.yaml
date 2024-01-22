@@ -10,8 +10,6 @@ services:
     command:
       - "uvicorn"
       - "app:app"
-      - "--host"
-      - "admin_api"
       - "--port"
       - "8000"
       - "--reload"
