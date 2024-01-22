@@ -10,7 +10,7 @@ from pydantic_settings import BaseSettings
 
 class Database(BaseSettings):
     prefix: str = "board_"
-    database_url: str = "postgresql+asyncpg://admin:admin@localhost:5432/bulletin-app"
+    database_url: str
 
 
 @dataclasses.dataclass

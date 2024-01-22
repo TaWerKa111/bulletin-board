@@ -15,6 +15,8 @@ services:
       - "--port"
       - "8000"
       - "--reload"
+    environment:
+      DATABASE_URL: "postgresql+asyncpg://admin:admin@db/bulletin-app"
     volumes:
       - .:/app
 
