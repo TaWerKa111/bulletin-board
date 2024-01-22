@@ -21,7 +21,8 @@ class RoleConfig:
 
 @dataclasses.dataclass
 class AppConfig:
-    secret_key = "secrets"
+    secret_key = "secret_key"
+    jwt_alg = "HS256"
     role = RoleConfig()
     database = Database()
     base_dir = os.path.dirname(os.path.abspath(__file__))

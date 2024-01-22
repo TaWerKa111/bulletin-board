@@ -22,9 +22,9 @@ class JWTBearer(HTTPBearer):
             if payload.get("refresh_uuid"):
                 raise HTTPException(
                     status_code=403, detail="Invalid token or expired token.")
-            if self.roles and payload.get("role") in self.roles:
+            if self.roles and payload.get("role") not in self.roles:
                 raise HTTPException(
-                    status_code=403, detail="Invalid token or expired token.")
+                    status_code=403, detail="You dont have permissions.")
             return payload
         else:
             raise HTTPException(
@@ -33,7 +33,9 @@ class JWTBearer(HTTPBearer):
     @staticmethod
     def verify_jwt(token):
         try:
-            payload = jwt.decode(token, AppConfig.secret_key)
+            payload = jwt.decode(
+                token, AppConfig.secret_key, algorithms=AppConfig.jwt_alg)
             return payload
-        except :
+        except Exception as err:
+            print(f"err {err}")
             return None

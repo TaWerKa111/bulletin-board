@@ -11,7 +11,7 @@ class DetailBulletinSchema(CreateBulletinSchema):
     id: int
     user_id: int
 
-    class Meta:
+    class Config:
         from_attributes = True
 
 
@@ -20,7 +20,7 @@ class MinBulletinSchema(BaseModel):
     user_id: int
     title: int
 
-    class Meta:
+    class Config:
         from_attributes = True
 
 

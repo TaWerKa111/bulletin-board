@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -15,6 +17,8 @@ router = APIRouter(
     tags=["Auth"],
 )
 
+logger = logging.getLogger(__name__)
+
 
 @router.post(
     "/login/"
@@ -29,20 +33,20 @@ async def login_view(
     )
     if not user:
         raise HTTPException(
-            status_code=400, detail=BinaryResponse(
-                success=False, message="Invalid login or password")
+            status_code=400, detail="Invalid login or password"
         )
+    logger.debug(f"User = {user.login} = {user.password_hash}")
 
-    if not verify_password(user.password_hash, login_data.password):
+    if not verify_password(login_data.password, user.password_hash):
         raise HTTPException(
-            status_code=400, detail=BinaryResponse(
-                success=False, message="Invalid login or password")
+            status_code=400, detail="Invalid login or password"
         )
 
-    access_token = generate_access_token(user)
-    refresh_token = generate_refresh_token(user)
+    access_token = await generate_access_token(user)
+    refresh_token = await generate_refresh_token(user)
 
     return TokensResponse(
+        success=True,
         result={
             "access_token": access_token,
             "refresh_token": refresh_token
@@ -67,10 +71,13 @@ async def signup_view(
         password_hash=get_password_hash(signup_data.password1)
     )
 
-    access_token = generate_access_token(user)
-    refresh_token = generate_refresh_token(user)
+    access_token = await generate_access_token(user)
+    refresh_token = await generate_refresh_token(user)
+    db_session.add(user)
+    await db_session.commit()
 
     return TokensResponse(
+        success=True,
         result={
             "access_token": access_token,
             "refresh_token": refresh_token

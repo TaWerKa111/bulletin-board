@@ -1,6 +1,6 @@
 import datetime
 
-from fastapi import APIRouter, Path, Depends
+from fastapi import APIRouter, Path, Depends, HTTPException
 from fastapi_pagination import Params as PageParams
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -77,11 +77,12 @@ async def delete_bulletin_view(
     bulletin = await BulletinModel.get_bulletin(
         db_session, bulletin_id, user_id=jwt_payload.get("user_id")
     )
-    if bulletin:
-        pass
+    if not bulletin:
+        raise HTTPException(status_code=404, detail="Not found Bulletin!")
 
     bulletin.deleted_at = datetime.datetime.utcnow()
     db_session.add(bulletin)
     await db_session.commit()
+
     return BinaryResponse(
         succes=True, message=f"Success deleted bulletin by id = {bulletin_id}")

@@ -17,14 +17,15 @@ from fastapi_pagination.ext.sqlalchemy import paginate
 class TimeStampMixin(object):
     created_at: Mapped[datetime.datetime] = mapped_column(
         DateTime(), default=datetime.datetime.utcnow())
-    update_at: Mapped[datetime.datetime] = mapped_column(DateTime())
+    update_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(), nullable=True)
 
 
 class UserModel(Base, TimeStampMixin):
     __tablename__ = f"{config_database.prefix}users"
 
     id: Mapped[int] = mapped_column(Integer(), primary_key=True)
-    name: Mapped[str] = mapped_column(String(64))
+    name: Mapped[str] = mapped_column(String(64), nullable=True)
     login: Mapped[str] = mapped_column(String(32), unique=True)
     password_hash: Mapped[str] = mapped_column(String(64))
     role: Mapped[str] = mapped_column(String(8))

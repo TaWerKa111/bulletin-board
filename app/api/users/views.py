@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, Path, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi_pagination import Params as PageParams
 
+from app.api.users.schemas import UserListResponse
 from app.helpers.auth.classes import JWTBearer
 from app.helpers.schemas import BinaryResponse
 from database import get_session
@@ -29,7 +30,7 @@ async def get_users(
         db_session, page_params, login
     )
 
-    return
+    return UserListResponse(result=users)
 
 
 @router.patch("/{id}/block/")
